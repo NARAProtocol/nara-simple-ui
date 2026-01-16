@@ -48,7 +48,7 @@ export default function App() {
       const savedVersion = localStorage.getItem('nara_miner_address');
       if (savedVersion !== CONFIG.minerAddress) {
         // Clear history for fresh contract
-        console.log('Contract updated, clearing local history');
+        logger.debug('Contract updated, clearing local history');
         localStorage.removeItem('nara_claim_history');
         localStorage.removeItem('nara_jackpot_wins');
         localStorage.setItem('nara_miner_address', CONFIG.minerAddress);
@@ -146,13 +146,13 @@ export default function App() {
   // Handle finalize action
   const handleFinalize = useCallback(async () => {
     // Synchronous debounce check using ref
-    console.log('[DEBOUNCE] finalizingRef.current:', finalizingRef.current);
+    logger.debug('[DEBOUNCE] finalizingRef.current:', finalizingRef.current);
     if (pendingMines <= 0 || finalizingRef.current) {
-      console.log('[DEBOUNCE] Blocked! Already finalizing.');
+      logger.debug('[DEBOUNCE] Blocked! Already finalizing.');
       return;
     }
     finalizingRef.current = true; // Immediately block further calls
-    console.log('[DEBOUNCE] Set to true, proceeding...');
+    logger.debug('[DEBOUNCE] Set to true, proceeding...');
     
     // Also update state for UI
     setIsFinalizing(true);
@@ -164,13 +164,7 @@ export default function App() {
     
     const countToFinalize = Math.min(pendingMines, available);
     
-    console.log('[FINALIZE] State:', { 
-      pending: pendingMines, 
-      cap, 
-      used, 
-      available, 
-      count: countToFinalize 
-    });
+    logger.debug('[FINALIZE] State:', { pending: pendingMines, cap, used, available, count: countToFinalize });
 
     if (countToFinalize <= 0) {
       setError('Epoch cap reached for this epoch. Please wait for the next epoch to finalize remaining mines.');
@@ -188,7 +182,7 @@ export default function App() {
       const tx = await finalizeMines(countToFinalize);
       setSuccess(`Finalize TX sent: ${tx.hash.slice(0, 10)}...`);
       
-      console.log('[FINALIZE] Reducing pending locally by:', countToFinalize);
+      logger.debug('[FINALIZE] Reducing pending locally by:', countToFinalize);
       // Immediately reduce pending count to prevent double-click
       setPendingMines(prev => Math.max(0, prev - countToFinalize));
       
@@ -406,7 +400,7 @@ export default function App() {
         },
       });
     } catch (err) {
-      console.error('Failed to add token:', err);
+      logger.error('Failed to add token', err);
     }
   }, []);
 
@@ -671,7 +665,7 @@ export default function App() {
                 {jackpotWins.length > 0 && (
                   <div className="jackpot-history">
                     <div className="history-header">
-                      <span className="history-title">🎰 JACKPOT WINS</span>
+                      <span className="history-title">JACKPOT WINS</span>
                     </div>
                     <div className="history-list">
                       {jackpotWins.map((win, i) => (

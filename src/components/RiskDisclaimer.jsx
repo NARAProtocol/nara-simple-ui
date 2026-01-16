@@ -28,7 +28,7 @@ export default function RiskDisclaimer({ onAccept }) {
   return (
     <div style={styles.overlay}>
       <div style={styles.modal}>
-        <h2 style={styles.title}>⚠️ Risk Warning</h2>
+        <h2 style={styles.title}>Risk Warning</h2>
         
         <div style={styles.content}>
           <p style={styles.paragraph}>
