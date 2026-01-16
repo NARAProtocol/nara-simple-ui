@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import { getUserDashboard, getClaimableEpochsBatch, fetchBonusOverview } from './services/contracts';
 import { mine, claimBatch, getTicketPrice, finalizeMines, getPendingMines } from './services/mining';
 import BonusDisplay from './components/BonusDisplay';
+import TestnetFaucet from './components/TestnetFaucet';
 import { CONFIG, EPOCH_SECONDS } from './constants';
 import { MINING_LIMITS, ERROR_MESSAGES } from './constants/limits';
 import { validateEthInput, sanitizeError } from './utils/validation';
@@ -454,6 +455,7 @@ export default function App() {
             <h1>NARA PROTOCOL</h1>
             <p>Connect your wallet to start mining</p>
             <ConnectButton />
+            <TestnetFaucet />
           </div>
         ) : (
           <>
@@ -609,6 +611,7 @@ export default function App() {
                       >
                         GET NARA
                       </a>
+                      <TestnetFaucet />
                   </div>
                 )}
               </div>
