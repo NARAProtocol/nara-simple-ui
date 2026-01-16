@@ -7,6 +7,9 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     
+    // Base URL for production assets (ensures correct paths when proxied)
+    base: mode === 'production' ? 'https://nara-simple-ui.vercel.app/' : '/',
+    
     // Development server configuration
     server: {
       port: 3000,
