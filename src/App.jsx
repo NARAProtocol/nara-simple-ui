@@ -461,6 +461,9 @@ export default function App() {
           <>
             {activeView === 'mine' ? (
               <div className="mine-view">
+                {/* Testnet Faucet (Moved to top) */}
+                <TestnetFaucet />
+
                 {/* Epoch Timer Header */}
                 <div className="epoch-header">
                   <span className="epoch-label">EPOCH ENDS IN</span>
@@ -615,10 +618,7 @@ export default function App() {
                   </div>
                 )}
                 
-                {/* Faucet for eligible miners (Testing only) */}
-                {dashboard?.userCanMine && (
-                   <TestnetFaucet />
-                )}
+                
               </div>
             ) : (
               <div className="claim-view">
