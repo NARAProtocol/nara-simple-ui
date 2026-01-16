@@ -175,9 +175,13 @@ export default function TestnetFaucet() {
         onClick={handleClaim}
         disabled={isClaiming || !canClaim}
       >
-        {isClaiming ? (claimStep || 'PROCESSING...') : `GET ${FAUCET_AMOUNT} TEST NARA`}
+        {isClaiming 
+          ? (claimStep || 'PROCESSING...') 
+          : canClaim 
+            ? `GET ${FAUCET_AMOUNT} TEST NARA`
+            : `FAUCET (${blockReason || 'Not available'})`
+        }
       </button>
-      {blockReason && <span className="faucet-message">{blockReason}</span>}
       {message && <span className="faucet-message">{message}</span>}
     </div>
   );
