@@ -614,6 +614,11 @@ export default function App() {
                       <TestnetFaucet />
                   </div>
                 )}
+                
+                {/* Faucet for eligible miners (Testing only) */}
+                {dashboard?.userCanMine && (
+                   <TestnetFaucet />
+                )}
               </div>
             ) : (
               <div className="claim-view">
