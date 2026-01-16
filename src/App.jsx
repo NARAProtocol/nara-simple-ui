@@ -603,7 +603,7 @@ export default function App() {
                         Hold ≥ 0.1 NARA (You have: {naraBalance ? Number(naraBalance.formatted).toFixed(4) : '0.0000'})
                       </li>
                       <li className={dashboard?.userCanMine ? 'met' : 'unmet'}>
-                        Hold for 3 hours after purchase
+                        Hold for 5 minutes after purchase (Testnet)
                       </li>
                     </ul>
                       <a 
