@@ -7,6 +7,10 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     
+    // Relative base path for proxy compatibility
+    // This allows assets to be loaded from the proxying domain (e.g. naraprotocol.io/assets/...)
+    base: './',
+    
     // Development server configuration
     server: {
       port: 3000,
