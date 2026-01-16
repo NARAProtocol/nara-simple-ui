@@ -614,7 +614,6 @@ export default function App() {
                       >
                         GET NARA
                       </a>
-                      <TestnetFaucet />
                   </div>
                 )}
                 
