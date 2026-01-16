@@ -168,6 +168,25 @@ export default function TestnetFaucet() {
     );
   }
 
+  const addToWallet = async () => {
+    if (!window.ethereum) return;
+    try {
+      await window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address: CONFIG.tokenAddress,
+            symbol: 'NARA',
+            decimals: 18,
+          },
+        },
+      });
+    } catch (err) {
+      console.error('Failed to add token', err);
+    }
+  };
+
   return (
     <div className="faucet-container">
       <button
@@ -182,7 +201,17 @@ export default function TestnetFaucet() {
             : `FAUCET (${blockReason || 'Not available'})`
         }
       </button>
-      {message && <span className="faucet-message">{message}</span>}
+      {blockReason && <span className="faucet-message">{blockReason}</span>}
+      {message && (
+        <div className="faucet-success-container">
+          <span className="faucet-message">{message}</span>
+          {message.includes('Received') && (
+            <button onClick={addToWallet} className="add-faucet-token-btn">
+              + 🦊 ADD TO WALLET
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

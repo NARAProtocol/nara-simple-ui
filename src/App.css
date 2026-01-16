@@ -826,6 +826,32 @@
   box-shadow: none;
 }
 
+.faucet-success-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.add-faucet-token-btn {
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  color: #4a9eff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s ease;
+}
+
+.add-faucet-token-btn:hover {
+  background: rgba(74, 158, 255, 0.1);
+  border-color: #4a9eff;
+  color: #ffffff;
+}
+
 .faucet-message {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.6);
