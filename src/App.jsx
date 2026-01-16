@@ -415,6 +415,11 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* Testnet Banner */}
+      <div className="testnet-banner">
+        BASE SEPOLIA TESTNET
+      </div>
+
       {/* Status Bar */}
       <header className="status-bar">
         {isConnected && (
