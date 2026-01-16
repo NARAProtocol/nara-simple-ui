@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- Content Security Policy - Adjust as needed for your deployment -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval';
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com;
+      img-src 'self' data: https:;
+      connect-src 'self' https://*.base.org wss://*.walletconnect.com https://*.walletconnect.com https://*.walletconnect.org wss://*.walletconnect.org https://*.alchemy.com wss://*.alchemy.com https://api.web3modal.org;
+      frame-src 'self' https://*.walletconnect.com https://*.walletconnect.org;
+    "
+    />
+
+    <!-- SEO Meta Tags -->
+    <title>NARA Mining - Decentralized Mining Protocol</title>
+    <meta
+      name="description"
+      content="Mine NARA tokens through the decentralized NARA Protocol. Connect your wallet and start earning rewards."
+    />
+    <meta
+      name="keywords"
+      content="NARA, mining, crypto, DeFi, Base, blockchain"
+    />
+    <meta name="author" content="NARA Protocol" />
+
+    <!-- OpenGraph / Social Media -->
+    <meta property="og:title" content="NARA Mining" />
+    <meta
+      property="og:description"
+      content="Decentralized mining protocol on Base"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="NARA Mining" />
+    <meta
+      name="twitter:description"
+      content="Decentralized mining protocol on Base"
+    />
+
+    <!-- Favicons -->
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.svg" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this application.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
