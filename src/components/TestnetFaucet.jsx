@@ -147,7 +147,15 @@ export default function TestnetFaucet() {
     }
   };
 
-  if (!isConnected) return null;
+  // Show connect hint when not connected
+  if (!isConnected) {
+    if (!FAUCET_PRIVATE_KEY) return null;
+    return (
+      <div className="faucet-container">
+        <span className="faucet-message">Connect wallet to claim test NARA</span>
+      </div>
+    );
+  }
 
   // Don't render if faucet not configured
   if (!FAUCET_PRIVATE_KEY) {
