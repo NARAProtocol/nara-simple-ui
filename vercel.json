@@ -1,10 +1,13 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "functions": {
-    "api/*.js": {
+    "api/claim-faucet.js": {
       "runtime": "nodejs20.x"
     }
   },
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/api/claim-faucet", "destination": "/api/claim-faucet" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
