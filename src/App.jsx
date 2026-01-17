@@ -6,6 +6,7 @@ import { getUserDashboard, getClaimableEpochsBatch, fetchBonusOverview } from '.
 import { mine, claimBatch, getTicketPrice, finalizeMines, getPendingMines } from './services/mining';
 import BonusDisplay from './components/BonusDisplay';
 import TestnetFaucet from './components/TestnetFaucet';
+import WalletHelp from './components/WalletHelp';
 import { CONFIG, EPOCH_SECONDS } from './constants';
 import { MINING_LIMITS, ERROR_MESSAGES } from './constants/limits';
 import { validateEthInput, sanitizeError } from './utils/validation';
@@ -463,6 +464,7 @@ export default function App() {
             <h1>NARA PROTOCOL</h1>
             <p>Connect your wallet to start mining</p>
             <ConnectButton />
+            <WalletHelp />
             <TestnetFaucet />
           </div>
         ) : (

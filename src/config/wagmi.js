@@ -1,15 +1,15 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import {
   injectedWallet,
-  rainbowWallet,
-  walletConnectWallet,
-  trustWallet,
-  ledgerWallet,
   metaMaskWallet,
   coinbaseWallet,
+  walletConnectWallet,
+  rainbowWallet,
+  trustWallet,
+  ledgerWallet,
   safeWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { base, baseSepolia } from 'wagmi/chains';
+import { baseSepolia } from 'wagmi/chains';
 import { http } from 'wagmi';
 import { CONFIG } from './env';
 
@@ -19,27 +19,28 @@ export const config = getDefaultConfig({
   appUrl: 'https://naraprotocol.io',
   appIcon: 'https://naraprotocol.io/favicon.png',
   projectId: CONFIG.rainbowProjectId,
-  chains: [baseSepolia, base],
+  // Only Base Sepolia for testnet
+  chains: [baseSepolia],
   transports: {
     [baseSepolia.id]: http(CONFIG.rpcUrl),
-    [base.id]: http(),
   },
+  // Prioritize wallets with best Base Sepolia support (mobile-friendly)
   wallets: [
     {
-      groupName: 'Recommended',
+      groupName: 'Best for Base',
       wallets: [
-        injectedWallet,
-        rainbowWallet,
-        walletConnectWallet,
-        metaMaskWallet,
-        coinbaseWallet,
-        trustWallet,
-        safeWallet,
+        coinbaseWallet,  // Best Base support - owned by same company
+        metaMaskWallet,  // Best testnet support
+        injectedWallet,  // Browser extension
       ],
     },
     {
-      groupName: 'Others',
+      groupName: 'Other Wallets',
       wallets: [
+        walletConnectWallet,
+        rainbowWallet,
+        trustWallet,
+        safeWallet,
         ledgerWallet,
       ],
     },
