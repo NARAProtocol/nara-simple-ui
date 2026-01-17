@@ -168,37 +168,6 @@ export default function TestnetFaucet() {
     );
   }
 
-  const [isClaimingEth, setIsClaimingEth] = useState(false);
-  const [ethMessage, setEthMessage] = useState('');
-
-  const handleEthClaim = async () => {
-    if (!address) return;
-    
-    setIsClaimingEth(true);
-    setEthMessage('Requesting ETH...');
-    
-    try {
-      const response = await fetch('/api/claim-faucet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address })
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to claim ETH');
-      }
-      
-      setEthMessage('✓ ETH sent! Check wallet soon.');
-    } catch (err) {
-      console.error('ETH Faucet error:', err);
-      setEthMessage(err.message || 'Claim failed');
-    } finally {
-      setIsClaimingEth(false);
-    }
-  };
-
   const addToWallet = async () => {
     if (!window.ethereum) return;
     try {
@@ -220,39 +189,19 @@ export default function TestnetFaucet() {
 
   return (
     <div className="faucet-container">
-      <div className="faucet-buttons-row" style={{ display: 'flex', gap: '10px', width: '100%', justifyContent: 'center' }}>
-        <button
-          className={`faucet-btn ${!canClaim ? 'disabled' : ''}`}
-          onClick={handleClaim}
-          disabled={isClaiming || !canClaim}
-          style={{ flex: 1 }}
-        >
-          {isClaiming 
-            ? (claimStep || 'PROCESSING...') 
-            : canClaim 
-              ? `GET ${FAUCET_AMOUNT} NARA`
-              : `NARA (${blockReason || 'Cooling down'})`
-          }
-        </button>
-        
-        <button
-          className="faucet-btn"
-          onClick={handleEthClaim}
-          disabled={isClaimingEth}
-          style={{ flex: 1, background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' }}
-        >
-          {isClaimingEth ? 'SENDING...' : 'GET TEST ETH'}
-        </button>
-      </div>
-
+      <button
+        className={`faucet-btn ${!canClaim ? 'disabled' : ''}`}
+        onClick={handleClaim}
+        disabled={isClaiming || !canClaim}
+      >
+        {isClaiming 
+          ? (claimStep || 'PROCESSING...') 
+          : canClaim 
+            ? `GET ${FAUCET_AMOUNT} TEST NARA`
+            : `FAUCET (${blockReason || 'Not available'})`
+        }
+      </button>
       {blockReason && <span className="faucet-message">{blockReason}</span>}
-      
-      {ethMessage && (
-        <span className="faucet-message" style={{ color: ethMessage.includes('failed') ? '#ff6b6b' : '#4ade80' }}>
-          {ethMessage}
-        </span>
-      )}
-      
       {message && (
         <div className="faucet-success-container">
           <span className="faucet-message">{message}</span>
