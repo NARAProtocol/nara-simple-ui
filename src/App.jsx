@@ -78,6 +78,8 @@ export default function App() {
       return;
     }
 
+    let isValid = true;
+
     const loadData = async () => {
       try {
         logger.debug('Loading dashboard for', address);
@@ -89,6 +91,9 @@ export default function App() {
           fetchBonusOverview(address)
         ]);
         
+        // Prevent race condition - don't update if address changed
+        if (!isValid) return;
+
         setDashboard(dashboardResult);
         setClaimableData(claimableResult);
         setTicketPrice(priceResult);
@@ -98,15 +103,18 @@ export default function App() {
         if (dashboardResult) {
           setTimeRemaining(dashboardResult.epochSecondsRemaining);
         }
-
       } catch (err) {
-        logger.error('Failed to load dashboard', err);
+        if (isValid) logger.error('Failed to load dashboard', err);
       }
     };
 
     loadData();
     const interval = setInterval(loadData, 30000);
-    return () => clearInterval(interval);
+
+    return () => {
+      isValid = false;
+      clearInterval(interval);
+    };
   }, [address, isConnected]);
 
 
@@ -458,7 +466,7 @@ export default function App() {
             <TestnetFaucet />
           </div>
         ) : (
-          <>
+          <React.Fragment key={address || 'auth-view'}>
             {activeView === 'mine' ? (
               <div className="mine-view">
                 {/* Testnet Faucet (Moved to top) */}
@@ -711,7 +719,7 @@ export default function App() {
                 CLAIM
               </button>
             </nav>
-          </>
+          </React.Fragment>
         )}
       </main>
     </div>
