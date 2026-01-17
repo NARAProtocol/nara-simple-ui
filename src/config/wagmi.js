@@ -9,7 +9,7 @@ import {
   coinbaseWallet,
   safeWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { baseSepolia } from 'wagmi/chains';
+import { base, baseSepolia } from 'wagmi/chains';
 import { http } from 'wagmi';
 import { CONFIG } from './env';
 
@@ -19,9 +19,10 @@ export const config = getDefaultConfig({
   appUrl: 'https://naraprotocol.io',
   appIcon: 'https://naraprotocol.io/favicon.png',
   projectId: CONFIG.rainbowProjectId,
-  chains: [baseSepolia],
+  chains: [baseSepolia, base],
   transports: {
     [baseSepolia.id]: http(CONFIG.rpcUrl),
+    [base.id]: http(),
   },
   wallets: [
     {
