@@ -201,6 +201,15 @@ export default function TestnetFaucet() {
             : `FAUCET (${blockReason || 'Not available'})`
         }
       </button>
+
+      <a 
+        href="https://portal.cdp.coinbase.com/products/faucet?projectId=06975f08-52d0-4cbc-9dbe-84a2ab1b244c&token=ETH&network=base-sepolia"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="faucet-btn eth-btn"
+      >
+        GET TEST ETH ↗
+      </a>
       {blockReason && <span className="faucet-message">{blockReason}</span>}
       {message && (
         <div className="faucet-success-container">
