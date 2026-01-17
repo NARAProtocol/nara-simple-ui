@@ -4,10 +4,10 @@ export default async function handler(request, response) {
   // CORS configuration
   response.setHeader('Access-Control-Allow-Credentials', true);
   response.setHeader('Access-Control-Allow-Origin', '*');
-  response.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  response.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
   response.setHeader(
     'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    'Content-Type'
   );
 
   // Handle OPTIONS request
@@ -26,28 +26,29 @@ export default async function handler(request, response) {
       return response.status(400).json({ error: 'Wallet address is required' });
     }
 
+    // Validate address format
+    if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+      return response.status(400).json({ error: 'Invalid wallet address format' });
+    }
+
     // Initialize CDP Client with Environment Variables from Vercel
-    // Users need to set CDP_API_KEY_NAME and CDP_API_KEY_PRIVATE_KEY in Vercel
-    const client = new CdpClient({
+    // CDP_API_KEY_NAME = the "name" field from the JSON key file
+    // CDP_API_KEY_PRIVATE_KEY = the "privateKey" field from the JSON key file
+    const cdp = new CdpClient({
       apiKeyName: process.env.CDP_API_KEY_NAME,
-      apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, '\n'), // Handle newlines in secret
+      apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     });
 
     console.log(`Requesting faucet for: ${address}`);
 
-    // Request ETH from Base Sepolia Faucet
-    const faucetTx = await client.requestFaucet({
-      assetId: 'eth',
-      networkId: 'base-sepolia',
-      destinationAddress: address
+    // Request ETH from Base Sepolia Faucet using the EVM namespace
+    const faucetResponse = await cdp.evm.requestFaucet({
+      address: address,
+      network: "base-sepolia",
+      token: "eth"
     });
 
-    // Wait for the transaction to be confirmed (optional, but good for UI)
-    // The SDK returns the transaction object immediately.
-    
-    // Note: The SDK might return a generator or a promise depending on version, 
-    // but typically requestFaucet returns a FaucetTransaction.
-    const txHash = faucetTx.transactionHash;
+    const txHash = faucetResponse.transactionHash;
 
     return response.status(200).json({
       success: true,
@@ -59,12 +60,11 @@ export default async function handler(request, response) {
   } catch (error) {
     console.error('Faucet Error:', error);
     
-    // Handle specific CDP errors if known, otherwise generic
     const errorMessage = error.message || 'Failed to request funds';
     
     // Check for rate limit error messages
-    if (errorMessage.includes('rate limit')) {
-       return response.status(429).json({ error: 'Faucet rate limit reached. Please try again later.' });
+    if (errorMessage.toLowerCase().includes('rate limit') || errorMessage.includes('429')) {
+      return response.status(429).json({ error: 'Faucet rate limit reached. Please try again later.' });
     }
 
     return response.status(500).json({ error: errorMessage });
