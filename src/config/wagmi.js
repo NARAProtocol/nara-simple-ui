@@ -15,6 +15,9 @@ import { CONFIG } from './env';
 
 export const config = getDefaultConfig({
   appName: 'NARA Mining',
+  appDescription: 'NARA Protocol Mining Interface',
+  appUrl: 'https://naraprotocol.io',
+  appIcon: 'https://naraprotocol.io/favicon.png',
   projectId: CONFIG.rainbowProjectId,
   chains: [baseSepolia],
   transports: {
