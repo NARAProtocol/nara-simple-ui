@@ -207,9 +207,16 @@ export default function TestnetFaucet() {
         target="_blank"
         rel="noopener noreferrer"
         className="faucet-btn eth-btn"
+        onClick={() => {
+          if (address) navigator.clipboard.writeText(address);
+        }}
       >
         GET TEST ETH ↗
       </a>
+      <span className="faucet-message" style={{ marginTop: '4px', fontSize: '10px', opacity: 0.7 }}>
+        (Address copied on click)
+      </span>
+
       {blockReason && <span className="faucet-message">{blockReason}</span>}
       {message && (
         <div className="faucet-success-container">
