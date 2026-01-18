@@ -7,8 +7,9 @@ import {
   trustWallet,
   ledgerWallet,
   safeWallet,
+  coinbaseWallet, // Re-added for Android support
 } from '@rainbow-me/rainbowkit/wallets';
-// Import baseAccount - the new Coinbase/Base wallet connector (replaces deprecated coinbaseWallet)
+// Import baseAccount - the new Coinbase/Base wallet connector
 import { baseAccount } from '@rainbow-me/rainbowkit/wallets';
 import { baseSepolia } from 'wagmi/chains';
 import { http } from 'wagmi';
@@ -34,7 +35,8 @@ export const config = getDefaultConfig({
     {
       groupName: 'Best for Base',
       wallets: [
-        baseAccount,  // Best Base support - owned by same company (replaces coinbaseWallet)
+        baseAccount,  // Smart Wallet (Passkeys)
+        coinbaseWallet, // Standard Mobile App (Android fix)
         metaMaskWallet,  // Best testnet support
         rainbowWallet,
         injectedWallet,  // Browser extension
