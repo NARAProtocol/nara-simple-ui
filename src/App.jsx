@@ -587,22 +587,31 @@ export default function App() {
                 {success && <div className="success-message">{success}</div>}
 
                 {/* Mine Button */}
-                <button 
-                  className={`action-button mine-btn ${(!dashboard?.userCanMine || (dashboard?.effectiveCap > 0 && (dashboard.effectiveCap - (dashboard.pendingTickets||0) - pendingMines) <= 0)) ? 'disabled' : ''}`}
-                  onClick={handleMine}
-                  disabled={
-                    isLoading || 
-                    miningPhase !== '' || 
-                    !dashboard?.userCanMine || 
-                    (dashboard?.effectiveCap > 0 && (dashboard.effectiveCap - (dashboard.pendingTickets||0) - pendingMines) <= 0)
-                  }
-                  title={!dashboard?.userCanMine ? 'Requirements not met' : ''}
-                >
-                  {miningPhase === 'preparing' ? 'PREPARING...' : 
-                   miningPhase === 'confirming' ? 'CONFIRM IN WALLET...' :
-                   miningPhase === 'waiting' ? 'CONFIRMING...' :
-                   isLoading ? 'MINING...' : 'MINE'}
-                </button>
+                {/* Mine Button */}
+                {(() => {
+                  const currentCap = dashboard?.effectiveCap || dashboard?.hardCap || 0;
+                  const currentUsed = (dashboard?.pendingTickets || 0) + pendingMines;
+                  const isCapReached = currentCap > 0 && (currentCap - currentUsed) <= 0;
+                  
+                  return (
+                    <button 
+                      className={`action-button mine-btn ${(!dashboard?.userCanMine || isCapReached) ? 'disabled' : ''}`}
+                      onClick={handleMine}
+                      disabled={
+                        isLoading || 
+                        miningPhase !== '' || 
+                        !dashboard?.userCanMine || 
+                        isCapReached
+                      }
+                      title={!dashboard?.userCanMine ? 'Requirements not met' : (isCapReached ? 'Epoch Cap Reached' : '')}
+                    >
+                      {miningPhase === 'preparing' ? 'PREPARING...' : 
+                       miningPhase === 'confirming' ? 'CONFIRM IN WALLET...' :
+                       miningPhase === 'waiting' ? 'CONFIRMING...' :
+                       isLoading ? 'MINING...' : 'MINE'}
+                    </button>
+                  );
+                })()}
 
                 {/* Pending Mines Status Card - show during mining or when pending */}
                 {(pendingMines > 0 || miningPhase !== '') && (
