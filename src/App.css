@@ -50,6 +50,57 @@
   height: 32px; /* Fixed height to match */
 }
 
+/* Wallet Balances Display */
+.wallet-balances {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 24px;
+  background: rgba(10, 10, 20, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.balance-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.balance-item.eth {
+  border-color: rgba(98, 126, 234, 0.3);
+}
+
+.balance-item.nara {
+  border-color: rgba(74, 158, 255, 0.3);
+}
+
+.balance-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 1px;
+}
+
+.balance-item.eth .balance-label {
+  color: rgba(98, 126, 234, 0.8);
+}
+
+.balance-item.nara .balance-label {
+  color: rgba(74, 158, 255, 0.8);
+}
+
+.balance-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
 @media (hover: hover) {
   .add-token-btn:hover, .buy-token-btn:hover {
     background: rgba(255, 255, 255, 0.2);

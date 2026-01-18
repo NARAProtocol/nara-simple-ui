@@ -21,6 +21,9 @@ export default function App() {
     address: address,
     token: CONFIG.tokenAddress,
   });
+  const { data: ethBalance } = useBalance({
+    address: address,
+  });
   
   // Sync wallet client with contracts service for WalletConnect/mobile support
   useEffect(() => {
@@ -534,6 +537,24 @@ export default function App() {
           </>
         )}
       </header>
+
+      {/* Wallet Balances - Visible when connected */}
+      {isConnected && (
+        <div className="wallet-balances">
+          <div className="balance-item eth">
+            <span className="balance-label">ETH</span>
+            <span className="balance-value">
+              {ethBalance ? Number(ethBalance.formatted).toFixed(4) : '0.0000'}
+            </span>
+          </div>
+          <div className="balance-item nara">
+            <span className="balance-label">NARA</span>
+            <span className="balance-value">
+              {naraBalance ? Number(naraBalance.formatted).toFixed(2) : '0.00'}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="main-content">
