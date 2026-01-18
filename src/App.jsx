@@ -204,7 +204,22 @@ export default function App() {
         getPendingMines(address),
         getUserDashboard(address)
       ]);
-      setPendingMines(newPending);
+      
+      // RPC Lag Protection:
+      // If RPC return value hasn't decreased (still >= original), it's stale.
+      // Trust our optimistic calculation in that case.
+      const expectedRemaining = Math.max(0, pendingMines - countToFinalize);
+      if (newPending >= pendingMines) {
+        logger.debug('[FINALIZE] RPC data stale (new >= old), keeping optimistic state', {
+          rpc: newPending,
+          old: pendingMines,
+          kept: expectedRemaining
+        });
+        setPendingMines(expectedRemaining);
+      } else {
+        setPendingMines(newPending);
+      }
+
       setDashboard(newDashboard);
       
     } catch (err) {
