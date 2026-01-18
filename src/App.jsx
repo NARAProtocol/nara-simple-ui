@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useWalletClient } from 'wagmi';
 import { ethers } from 'ethers';
-import { getUserDashboard, getClaimableEpochsBatch, fetchBonusOverview } from './services/contracts';
+import { getUserDashboard, getClaimableEpochsBatch, fetchBonusOverview, setWalletClient } from './services/contracts';
 import { mine, claimBatch, getTicketPrice, finalizeMines, getPendingMines } from './services/mining';
 import BonusDisplay from './components/BonusDisplay';
 import TestnetFaucet from './components/TestnetFaucet';
@@ -15,10 +15,16 @@ import './App.css';
 
 export default function App() {
   const { address, isConnected } = useAccount();
+  const { data: walletClient } = useWalletClient();
   const { data: naraBalance } = useBalance({
     address: address,
     token: CONFIG.tokenAddress,
   });
+  
+  // Sync wallet client with contracts service for WalletConnect/mobile support
+  useEffect(() => {
+    setWalletClient(walletClient || null);
+  }, [walletClient]);
   
   // Timer and epoch state
   const [timeRemaining, setTimeRemaining] = useState(180);

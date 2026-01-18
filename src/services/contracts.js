@@ -49,10 +49,56 @@ export function resetProvider() {
 }
 
 /**
+ * Wagmi wallet client storage for WalletConnect/mobile support
+ */
+let currentWalletClient = null;
+
+/**
+ * Set the wagmi wallet client (called from App.jsx when connection changes)
+ * @param {Object} client - wagmi wallet client
+ */
+export function setWalletClient(client) {
+  currentWalletClient = client;
+  if (client) {
+    logger.debug('Wallet client set:', client.account?.address?.slice(0, 6) + '...');
+  } else {
+    logger.debug('Wallet client cleared');
+  }
+}
+
+/**
+ * Convert wagmi wallet client to ethers signer
+ */
+function walletClientToSigner(walletClient) {
+  const { account, chain, transport } = walletClient;
+  const network = {
+    chainId: chain.id,
+    name: chain.name,
+    ensAddress: chain.contracts?.ensRegistry?.address,
+  };
+  const provider = new ethers.BrowserProvider(transport, network);
+  return new ethers.JsonRpcSigner(provider, account.address);
+}
+
+/**
  * Get fresh signer from browser wallet
  * CRITICAL: Always create fresh - don't cache
+ * Supports both window.ethereum (desktop) and wagmi wallet client (mobile/WalletConnect)
  */
 export async function getSigner() {
+  // First, try wagmi wallet client (works for WalletConnect, mobile, etc.)
+  if (currentWalletClient) {
+    try {
+      const signer = walletClientToSigner(currentWalletClient);
+      logger.debug('Signer from wallet client:', currentWalletClient.account?.address?.slice(0, 6) + '...');
+      return signer;
+    } catch (error) {
+      logger.error('Failed to get signer from wallet client', error);
+      // Fall through to window.ethereum
+    }
+  }
+  
+  // Fallback: try window.ethereum (desktop browsers with injected wallets)
   if (typeof window === 'undefined' || !window.ethereum) {
     logger.error('No wallet detected');
     return null;
@@ -68,13 +114,14 @@ export async function getSigner() {
     const browserProvider = new ethers.BrowserProvider(window.ethereum);
     const signer = await browserProvider.getSigner();
     const address = await signer.getAddress();
-    logger.debug('Signer:', address.slice(0, 6) + '...' + address.slice(-4));
+    logger.debug('Signer from window.ethereum:', address.slice(0, 6) + '...' + address.slice(-4));
     return signer;
   } catch (error) {
     logger.error('Failed to get signer', error);
     return null;
   }
 }
+
 
 /**
  * Get Token contract (read-only)
