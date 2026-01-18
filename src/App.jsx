@@ -481,25 +481,42 @@ export default function App() {
     }
   }, [handleMine, isLoading]);
 
-  // Add NARA token to wallet
+  // Add NARA token to wallet (works with wagmi walletClient for mobile)
   const addToWallet = useCallback(async () => {
-    if (!window.ethereum) return;
-    try {
-      await window.ethereum.request({
-        method: 'wallet_watchAsset',
-        params: {
+    const tokenDetails = {
+      address: CONFIG.tokenAddress,
+      symbol: 'NARA',
+      decimals: 18,
+    };
+    
+    // Try wagmi walletClient first (works for mobile/WalletConnect)
+    if (walletClient) {
+      try {
+        await walletClient.watchAsset({
           type: 'ERC20',
-          options: {
-            address: CONFIG.tokenAddress,
-            symbol: 'NARA',
-            decimals: 18,
-          },
-        },
-      });
-    } catch (err) {
-      logger.error('Failed to add token', err);
+          options: tokenDetails,
+        });
+        return;
+      } catch (err) {
+        logger.debug('walletClient.watchAsset failed, trying window.ethereum', err);
+      }
     }
-  }, []);
+    
+    // Fallback to window.ethereum (desktop browsers)
+    if (window.ethereum) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: tokenDetails,
+          },
+        });
+      } catch (err) {
+        logger.error('Failed to add token', err);
+      }
+    }
+  }, [walletClient]);
 
   // Compute display values - show jackpot pools (winnable ETH/NARA)
   // ETH: 30% of mining fees go to jackpot.ethPool
