@@ -196,6 +196,17 @@ export default function App() {
       // Immediately reduce pending count to prevent double-click
       setPendingMines(prev => Math.max(0, prev - countToFinalize));
       
+      // IMMEDIATE OPTIMISTIC UPDATE (Pre-Confirmation):
+      // Update dashboard used tickets immediately to prevent "Mine" button from unlocking
+      // The remaining cap formula is: Cap - Used - Pending
+      // Since Pending drops immediately, we must increase Used immediately to keep Remaining constant.
+      if (dashboard) {
+        setDashboard(prev => ({
+          ...prev,
+          pendingTickets: (prev.pendingTickets || 0) + countToFinalize
+        }));
+      }
+      
       await tx.wait();
       setSuccess(`Finalized ${countToFinalize} mines! Tickets credited.`);
       
