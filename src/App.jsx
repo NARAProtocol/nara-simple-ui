@@ -220,7 +220,27 @@ export default function App() {
         setPendingMines(newPending);
       }
 
-      setDashboard(newDashboard);
+      // Optimistic Dashboard Update:
+      // Prevent "Mine" button flashing by ensuring pendingTickets (used cap)
+      // reflects what we just finalized, even if RPC is stale.
+      // If newDashboard.pendingTickets hasn't increased, force it.
+      const oldUsed = dashboard?.pendingTickets || 0;
+      const newUsed = newDashboard?.pendingTickets || 0;
+      
+      if (newUsed <= oldUsed) {
+         // RPC stale - manually increment used tickets
+         setDashboard({
+            ...newDashboard,
+            pendingTickets: oldUsed + countToFinalize
+         });
+         logger.debug('[FINALIZE] RPC stale for dashboard, optimistic update applied', {
+            oldUsed,
+            newUsed,
+            forced: oldUsed + countToFinalize
+         });
+      } else {
+         setDashboard(newDashboard);
+      }
       
     } catch (err) {
       logger.error('Finalize failed', err);
