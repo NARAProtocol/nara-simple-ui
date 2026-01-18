@@ -208,9 +208,12 @@ export default function App() {
     setSuccess('');
     
     try {
+      // Guidance for mobile users: prompt to open wallet app
+      setSuccess('📱 Opening wallet... Check your wallet app to confirm!');
+      
       // Use wagmi hook for reliable wallet connectivity
       const txHash = await mining.finalizeMines(countToFinalize);
-      setSuccess(`Finalize TX sent: ${txHash.slice(0, 10)}...`);
+      setSuccess(`✓ TX sent! Hash: ${txHash.slice(0, 10)}...`);
       setPendingTxHash(txHash);
       
       logger.debug('[FINALIZE] Reducing pending locally by:', countToFinalize);
@@ -339,7 +342,7 @@ export default function App() {
 
     try {
       logger.tx('mine', { tickets: tickets.toString() });
-      setSuccess('Preparing transaction...');
+      setSuccess('📱 Opening wallet... Check your wallet app to confirm!');
       
       // Calculate cost
       const costWei = BigInt(tickets) * ticketPrice;
@@ -349,7 +352,7 @@ export default function App() {
       const txHash = await mining.requestMine(BigInt(tickets), costWei);
       
       setPendingTxHash(txHash);
-      setSuccess(`TX sent! Waiting for confirmation...`);
+      setSuccess(`✓ TX sent! Waiting for confirmation...`);
       
       // Immediately show pending state (optimistic update)
       setPendingMines(prev => prev + 1);
@@ -401,6 +404,9 @@ export default function App() {
       const epochsToClaim = [...claimableData.epochs]; // Copy before clearing
       const amountToClaim = totalClaimable;
       
+      // Guidance for mobile users
+      setSuccess('📱 Opening wallet... Check your wallet app to confirm!');
+      
       // Use wagmi hook for reliable wallet connectivity
       let txHash;
       if (epochsToClaim.length === 1) {
@@ -408,7 +414,7 @@ export default function App() {
       } else {
         txHash = await mining.claimBatch(epochsToClaim);
       }
-      setSuccess(`Claim TX sent: ${txHash.slice(0, 10)}...`);
+      setSuccess(`✓ Claim TX sent: ${txHash.slice(0, 10)}...`);
       setPendingTxHash(txHash);
       
       // Immediately clear claimable to prevent double-click
