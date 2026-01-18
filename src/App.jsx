@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useBalance, useWalletClient } from 'wagmi';
+import { useAccount, useBalance, useWalletClient, useWaitForTransactionReceipt } from 'wagmi';
 import { ethers } from 'ethers';
 import { getUserDashboard, getClaimableEpochsBatch, fetchBonusOverview, setWalletClient } from './services/contracts';
-import { mine, claimBatch, getTicketPrice, finalizeMines, getPendingMines } from './services/mining';
+import { getTicketPrice, getPendingMines, checkMiningEligibility, calculateCost } from './services/mining';
+import { useMining } from './hooks/useMining';
 import BonusDisplay from './components/BonusDisplay';
 import TestnetFaucet from './components/TestnetFaucet';
 import WalletHelp from './components/WalletHelp';
@@ -25,6 +26,15 @@ export default function App() {
   useEffect(() => {
     setWalletClient(walletClient || null);
   }, [walletClient]);
+  
+  // Wagmi mining hook - handles all wallet types reliably
+  const mining = useMining();
+  const [pendingTxHash, setPendingTxHash] = useState(null);
+  
+  // Wait for transaction confirmation
+  const { isLoading: isTxConfirming, isSuccess: isTxConfirmed } = useWaitForTransactionReceipt({
+    hash: pendingTxHash,
+  });
   
   // Timer and epoch state
   const [timeRemaining, setTimeRemaining] = useState(180);
@@ -195,8 +205,10 @@ export default function App() {
     setSuccess('');
     
     try {
-      const tx = await finalizeMines(countToFinalize);
-      setSuccess(`Finalize TX sent: ${tx.hash.slice(0, 10)}...`);
+      // Use wagmi hook for reliable wallet connectivity
+      const txHash = await mining.finalizeMines(countToFinalize);
+      setSuccess(`Finalize TX sent: ${txHash.slice(0, 10)}...`);
+      setPendingTxHash(txHash);
       
       logger.debug('[FINALIZE] Reducing pending locally by:', countToFinalize);
       // Immediately reduce pending count to prevent double-click
@@ -213,7 +225,7 @@ export default function App() {
         }));
       }
       
-      await tx.wait();
+      // Note: wagmi hook returns hash immediately, tx confirmation is async
       setSuccess(`Finalized ${countToFinalize} mines! Tickets credited.`);
       
       // Refresh with actual on-chain data
@@ -326,24 +338,31 @@ export default function App() {
       logger.tx('mine', { tickets: tickets.toString() });
       setSuccess('Preparing transaction...');
       
-      const tx = await mine(BigInt(tickets), address);
+      // Calculate cost
+      const costWei = BigInt(tickets) * ticketPrice;
+      
+      // Use wagmi hook for reliable wallet connectivity
       setMiningPhase('confirming');
+      const txHash = await mining.requestMine(BigInt(tickets), costWei);
+      
+      setPendingTxHash(txHash);
       setSuccess(`TX sent! Waiting for confirmation...`);
       
       // Immediately show pending state (optimistic update)
       setPendingMines(prev => prev + 1);
-      setIsLoading(false); // Allow user to see the pending card while waiting
+      setIsLoading(false);
       
       setMiningPhase('waiting');
-      await tx.wait();
+      // Transaction confirmation is handled by useWaitForTransactionReceipt
+      // We can't await here as wagmi returns hash immediately
       setMiningPhase('');
-      setSuccess('Mining confirmed! Click FINALIZE below.');
+      setSuccess('Mining request sent! Click FINALIZE when ready.');
       
-      // Refresh actual pending count from chain
-      // Use Math.max to prevent stale RPC data (lag) from resetting our optimistic count
-      // We know we just mined, so pending MUST be at least what it was intuitively.
-      const newPending = await getPendingMines(address);
-      setPendingMines(prev => Math.max(prev, newPending));
+      // Refresh actual pending count from chain after a short delay
+      setTimeout(async () => {
+        const newPending = await getPendingMines(address);
+        setPendingMines(prev => Math.max(prev, newPending));
+      }, 3000);
       
     } catch (err) {
       logger.error('Mining failed', err);
@@ -362,7 +381,7 @@ export default function App() {
       setIsLoading(false);
       setMiningPhase('');
     }
-  }, [ticketInput, address, ticketPrice, dashboard, pendingMines]);
+  }, [ticketInput, address, ticketPrice, dashboard, pendingMines, mining]);
 
   // Handle claim action
   const handleClaim = useCallback(async () => {
@@ -379,13 +398,20 @@ export default function App() {
       const epochsToClaim = [...claimableData.epochs]; // Copy before clearing
       const amountToClaim = totalClaimable;
       
-      const tx = await claimBatch(epochsToClaim);
-      setSuccess(`Claim TX sent: ${tx.hash.slice(0, 10)}...`);
+      // Use wagmi hook for reliable wallet connectivity
+      let txHash;
+      if (epochsToClaim.length === 1) {
+        txHash = await mining.claim(epochsToClaim[0]);
+      } else {
+        txHash = await mining.claimBatch(epochsToClaim);
+      }
+      setSuccess(`Claim TX sent: ${txHash.slice(0, 10)}...`);
+      setPendingTxHash(txHash);
       
       // Immediately clear claimable to prevent double-click
       setClaimableData({ epochs: [], amounts: [], totalClaimable: '0' });
       
-      await tx.wait();
+      // Note: wagmi hook returns hash immediately, tx confirmation is async
       setSuccess('Claimed successfully! Balance updating...');
       
       // Save to claim history
@@ -393,7 +419,7 @@ export default function App() {
         epochs: epochsToClaim,
         amount: amountToClaim,
         timestamp: Date.now(),
-        txHash: tx.hash
+        txHash: txHash
       };
       const updatedHistory = [newHistoryEntry, ...claimHistory].slice(0, 10);
       setClaimHistory(updatedHistory);
