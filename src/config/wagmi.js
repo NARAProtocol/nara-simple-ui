@@ -2,13 +2,14 @@ import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import {
   injectedWallet,
   metaMaskWallet,
-  coinbaseWallet,
-  walletConnectWallet,
   rainbowWallet,
+  walletConnectWallet,
   trustWallet,
   ledgerWallet,
   safeWallet,
 } from '@rainbow-me/rainbowkit/wallets';
+// Import baseAccount - the new Coinbase/Base wallet connector (replaces deprecated coinbaseWallet)
+import { baseAccount } from '@rainbow-me/rainbowkit/wallets';
 import { baseSepolia } from 'wagmi/chains';
 import { http } from 'wagmi';
 import { CONFIG } from './env';
@@ -22,15 +23,20 @@ export const config = getDefaultConfig({
   // Only Base Sepolia for testnet
   chains: [baseSepolia],
   transports: {
-    [baseSepolia.id]: http(CONFIG.rpcUrl),
+    [baseSepolia.id]: http(CONFIG.rpcUrl, {
+      batch: true,
+      retryCount: 3,
+      retryDelay: 1000,
+    }),
   },
   // Prioritize wallets with best Base Sepolia support (mobile-friendly)
   wallets: [
     {
       groupName: 'Best for Base',
       wallets: [
-        coinbaseWallet,  // Best Base support - owned by same company
+        baseAccount,  // Best Base support - owned by same company (replaces coinbaseWallet)
         metaMaskWallet,  // Best testnet support
+        rainbowWallet,
         injectedWallet,  // Browser extension
       ],
     },
@@ -38,10 +44,9 @@ export const config = getDefaultConfig({
       groupName: 'Other Wallets',
       wallets: [
         walletConnectWallet,
-        rainbowWallet,
         trustWallet,
-        safeWallet,
         ledgerWallet,
+        safeWallet,
       ],
     },
   ],
