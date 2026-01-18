@@ -36,7 +36,7 @@ export const config = getDefaultConfig({
       groupName: 'Best for Base',
       wallets: [
         baseAccount,  // Smart Wallet (Passkeys)
-        coinbaseWallet, // Standard Mobile App (Android fix)
+        coinbaseWallet({ appName: 'NARA Mining', preference: 'eoaOnly' }), // Standard Mobile App (EOA Only)
         metaMaskWallet,  // Best testnet support
         rainbowWallet,
         injectedWallet,  // Browser extension
