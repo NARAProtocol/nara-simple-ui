@@ -253,9 +253,10 @@ export default function App() {
           old: pendingMines,
           kept: expectedRemaining
         });
-        setPendingMines(expectedRemaining);
+        // Optimistic mismatch - refetch again shortly
+        setTimeout(() => mining.refetchPendingMines(), 2000);
       } else {
-        setPendingMines(newPending);
+        mining.refetchPendingMines();
       }
 
       // Optimistic Dashboard Update:
@@ -368,7 +369,8 @@ export default function App() {
       setSuccess(`✓ TX sent! Waiting for confirmation...`);
       
       // Immediately show pending state (optimistic update)
-      setPendingMines(prev => prev + 1);
+      // Immediately trigger refetch to show pending state
+      mining.refetchPendingMines();
       setIsLoading(false);
       
       setMiningPhase('waiting');
@@ -379,8 +381,7 @@ export default function App() {
       
       // Refresh actual pending count from chain after a short delay
       setTimeout(async () => {
-        const newPending = await getPendingMines(address);
-        setPendingMines(prev => Math.max(prev, newPending));
+        mining.refetchPendingMines();
       }, 3000);
       
     } catch (err) {
@@ -394,8 +395,7 @@ export default function App() {
       
       setMiningPhase('');
       // Revert optimistic update on error
-      const actualPending = await getPendingMines(address).catch(() => 0);
-      setPendingMines(actualPending);
+      mining.refetchPendingMines();
     } finally {
       setIsLoading(false);
       setMiningPhase('');
