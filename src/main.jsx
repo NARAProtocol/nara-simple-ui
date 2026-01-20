@@ -13,8 +13,10 @@ import '@rainbow-me/rainbowkit/styles.css';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 2,
+      retry: 1, // Only retry once to avoid hammering dead RPC
       staleTime: 10000,
+      throwOnError: false, // CRITICAL: Never throw - prevents ErrorBoundary crashes
+      refetchOnWindowFocus: false, // Reduce RPC calls
     },
   },
 });

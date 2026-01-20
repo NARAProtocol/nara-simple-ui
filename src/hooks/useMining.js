@@ -82,9 +82,11 @@ export function useMining() {
   } = useWaitForTransactionReceipt({ hash });
 
   // Real-time pending mine count from contract (source of truth)
+  // CRITICAL: retry:false and throwOnError:false prevent RPC errors from crashing the app
   const { 
     data: pendingMinesOnChain = 0n,
-    refetch: refetchPendingMines 
+    refetch: refetchPendingMines,
+    isError: isPendingError
   } = useReadContract({
     address: CONFIG.minerAddress,
     abi: minerAbi,
@@ -93,6 +95,8 @@ export function useMining() {
     query: {
       enabled: !!address,
       refetchInterval: 10000, // Refresh every 10s
+      retry: false, // Don't retry on RPC failure - prevents crash loops
+      throwOnError: false, // Never throw - return error state instead
     }
   });
 
