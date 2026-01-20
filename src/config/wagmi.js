@@ -12,13 +12,11 @@ import { baseSepolia } from 'wagmi/chains';
 import { http, fallback } from 'wagmi';
 import { CONFIG } from './env';
 
-// Multiple RPC endpoints for resilience (Alchemy first for reliability)
+// RPC endpoints - ONLY working ones, ordered by reliability
+// NOTE: sepolia.base.org removed - returns 403 Forbidden
 const rpcEndpoints = [
-  http('https://base-sepolia.g.alchemy.com/v2/obPLENfqSksoovd3JTUbM'),  // Alchemy - most reliable
-  http(CONFIG.rpcUrl),
-  http('https://base-sepolia-rpc.publicnode.com'),
-  http('https://base-sepolia.blockpi.network/v1/rpc/public'),
-  http('https://sepolia.base.org'),
+  http('https://base-sepolia.g.alchemy.com/v2/obPLENfqSksoovd3JTUbM'),  // Alchemy - primary
+  http('https://base-sepolia-rpc.publicnode.com'),  // publicnode - reliable fallback
 ];
 
 export const config = getDefaultConfig({
@@ -28,17 +26,15 @@ export const config = getDefaultConfig({
   // Base Sepolia testnet only
   chains: [baseSepolia],
   
-  // Fallback transport with multiple RPC endpoints
+  // Fallback transport - Alchemy primary, publicnode backup
   transports: {
     [baseSepolia.id]: fallback(rpcEndpoints, {
-      rank: true, // Automatically rank by latency
+      rank: false, // Use in order - Alchemy first
       retryCount: 2,
     }),
   },
   
   // NO CUSTOM WALLETS - let RainbowKit handle it
-  // This provides best mobile compatibility
-  
   ssr: false,
 });
 

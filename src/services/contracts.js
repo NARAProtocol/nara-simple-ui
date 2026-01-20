@@ -14,13 +14,11 @@ let providerIndex = 0;
 // RPC request timeout (30 seconds)
 const RPC_TIMEOUT = 30000;
 
-// Fallback RPC endpoints for resilience (Alchemy first for reliability)
+// Fallback RPC endpoints - ONLY working ones
+// NOTE: sepolia.base.org removed - returns 403 Forbidden
 const RPC_ENDPOINTS = [
-  'https://base-sepolia.g.alchemy.com/v2/obPLENfqSksoovd3JTUbM',  // Alchemy - most reliable
-  CONFIG.rpcUrl,
-  'https://base-sepolia-rpc.publicnode.com',
-  'https://base-sepolia.blockpi.network/v1/rpc/public',
-  'https://sepolia.base.org',
+  'https://base-sepolia.g.alchemy.com/v2/obPLENfqSksoovd3JTUbM',  // Alchemy - primary
+  'https://base-sepolia-rpc.publicnode.com',  // publicnode - reliable fallback
 ].filter(Boolean);
 
 /**
