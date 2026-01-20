@@ -9,8 +9,16 @@
  */
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { baseSepolia } from 'wagmi/chains';
-import { http } from 'wagmi';
+import { http, fallback } from 'wagmi';
 import { CONFIG } from './env';
+
+// Multiple RPC endpoints for resilience
+const rpcEndpoints = [
+  http(CONFIG.rpcUrl),
+  http('https://base-sepolia-rpc.publicnode.com'),
+  http('https://base-sepolia.blockpi.network/v1/rpc/public'),
+  http('https://sepolia.base.org'),
+];
 
 export const config = getDefaultConfig({
   appName: 'NARA Mining',
@@ -19,12 +27,11 @@ export const config = getDefaultConfig({
   // Base Sepolia testnet only
   chains: [baseSepolia],
   
-  // Custom transport with retry
+  // Fallback transport with multiple RPC endpoints
   transports: {
-    [baseSepolia.id]: http(CONFIG.rpcUrl, {
-      batch: true,
-      retryCount: 3,
-      retryDelay: 1000,
+    [baseSepolia.id]: fallback(rpcEndpoints, {
+      rank: true, // Automatically rank by latency
+      retryCount: 2,
     }),
   },
   

@@ -17,6 +17,7 @@ const RPC_TIMEOUT = 30000;
 // Fallback RPC endpoints for resilience
 const RPC_ENDPOINTS = [
   CONFIG.rpcUrl,
+  'https://base-sepolia-rpc.publicnode.com',  // User-provided reliable fallback
   'https://base-sepolia.blockpi.network/v1/rpc/public',
   'https://sepolia.base.org',
 ].filter(Boolean);
