@@ -211,8 +211,8 @@ export function useMining() {
     reset,
     refetchPendingMines,
     
-    // On-chain state (source of truth)
-    pendingMinesOnChain: Number(pendingMinesOnChain),
+    // On-chain state (source of truth) - default to 0 if not connected
+    pendingMinesOnChain: pendingMinesOnChain != null ? Number(pendingMinesOnChain) : 0,
     
     // Transaction state
     hash,
