@@ -34,8 +34,23 @@ class ErrorBoundary extends React.Component {
           <div style={styles.card}>
             <h2 style={styles.title}>Something went wrong</h2>
             <p style={styles.message}>
-              The application encountered an error. Please try refreshing the page.
+              The application encountered an error.
             </p>
+            {/* DEBUG: Show actual error message on screen */}
+            <div style={{ 
+              textAlign: 'left', 
+              background: '#222', 
+              padding: '10px', 
+              borderRadius: '6px', 
+              marginBottom: '20px', 
+              overflow: 'auto',
+              maxHeight: '150px' 
+            }}>
+              <code style={{ color: '#ff5555', fontSize: '12px' }}>
+                {this.state.error && this.state.error.toString()}
+              </code>
+            </div>
+            
             <button style={styles.button} onClick={this.handleReset}>
               Refresh Page
             </button>
