@@ -10,7 +10,6 @@ import { useCallback } from 'react';
 import { 
   useWriteContract, 
   useWaitForTransactionReceipt,
-  useSimulateContract,
   useReadContract,
   useAccount
 } from 'wagmi';
