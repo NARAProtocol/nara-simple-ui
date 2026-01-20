@@ -1,28 +1,25 @@
+/**
+ * Wagmi Configuration - Official RainbowKit Pattern
+ * 
+ * CRITICAL: Use getDefaultConfig WITHOUT custom wallets array.
+ * RainbowKit automatically provides the best wallet list including
+ * Coinbase, MetaMask, Rainbow, WalletConnect, etc.
+ * 
+ * Custom wallet arrays can cause connection issues on mobile.
+ */
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import {
-  injectedWallet,
-  metaMaskWallet,
-  rainbowWallet,
-  walletConnectWallet,
-  trustWallet,
-  ledgerWallet,
-  safeWallet,
-  coinbaseWallet,
-} from '@rainbow-me/rainbowkit/wallets';
-// Import baseAccount - the new Coinbase/Base wallet connector
-import { baseAccount } from '@rainbow-me/rainbowkit/wallets';
 import { baseSepolia } from 'wagmi/chains';
 import { http } from 'wagmi';
 import { CONFIG } from './env';
 
 export const config = getDefaultConfig({
   appName: 'NARA Mining',
-  appDescription: 'NARA Protocol Mining Interface',
-  appUrl: 'https://naraprotocol.io',
-  appIcon: 'https://naraprotocol.io/favicon.png',
   projectId: CONFIG.rainbowProjectId,
-  // Only Base Sepolia for testnet
+  
+  // Base Sepolia testnet only
   chains: [baseSepolia],
+  
+  // Custom transport with retry
   transports: {
     [baseSepolia.id]: http(CONFIG.rpcUrl, {
       batch: true,
@@ -30,28 +27,10 @@ export const config = getDefaultConfig({
       retryDelay: 1000,
     }),
   },
-  // Prioritize wallets with best Base Sepolia support (mobile-friendly)
-  wallets: [
-    {
-      groupName: 'Best for Base',
-      wallets: [
-        baseAccount,  // Smart Wallet (Passkeys) - MAIN option
-        (props) => coinbaseWallet({ ...props, appName: 'NARA Mining', preference: 'eoaOnly' }),
-        metaMaskWallet,
-        rainbowWallet,
-        injectedWallet,
-      ],
-    },
-    {
-      groupName: 'Other Wallets',
-      wallets: [
-        walletConnectWallet,
-        trustWallet,
-        ledgerWallet,
-        safeWallet,
-      ],
-    },
-  ],
+  
+  // NO CUSTOM WALLETS - let RainbowKit handle it
+  // This provides best mobile compatibility
+  
   ssr: false,
 });
 
