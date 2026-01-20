@@ -291,6 +291,17 @@ export default function App() {
     }
   }, [pendingMines, address, dashboard]);
 
+  // Emergency Reset Function
+  const resetPendingMines = useCallback(() => {
+    if (window.confirm('This will clear your local pending count. Only do this if your transaction failed but the app is stuck. Continue?')) {
+      setPendingMines(0);
+      setMiningPhase('');
+      setIsFinalizing(false);
+      finalizingRef.current = false;
+      setSuccess('State reset. You can try mining again.');
+    }
+  }, []);
+
   // Handle mine action
   const handleMine = useCallback(async () => {
     const tickets = parseInt(ticketInput, 10) || 0;
@@ -733,6 +744,14 @@ export default function App() {
                             if (count < pendingMines) return `FINALIZE ${count}/${pendingMines} MINES`;
                             return `FINALIZE ${pendingMines} MINES`;
                           })()}
+                        </button>
+                        <button 
+                          className="action-button reset-btn"
+                          onClick={resetPendingMines}
+                          style={{ marginTop: '8px', background: 'rgba(255, 255, 255, 0.05)', fontSize: '10px', padding: '8px' }}
+                          title="Click here if you are stuck"
+                        >
+                          STUCK? RESET STATE
                         </button>
                       </>
                     )}
