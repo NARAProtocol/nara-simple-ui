@@ -49,7 +49,8 @@ export default function App() {
   const [bonusOverview, setBonusOverview] = useState(null);
   const [claimableData, setClaimableData] = useState(null);
   const [ticketPrice, setTicketPrice] = useState(null);
-  const [pendingMines, setPendingMines] = useState(0);
+  // pendingMines now comes from useMining hook (on-chain source of truth)
+  const pendingMines = mining.pendingMinesOnChain;
   
   // Input state - now tracks ticket count
   const [ticketInput, setTicketInput] = useState('1');
@@ -95,7 +96,7 @@ export default function App() {
       setDashboard(null);
       setBonusOverview(null);
       setClaimableData(null);
-      setPendingMines(0);
+      // pendingMines handled by useMining hook
       return;
     }
 
@@ -118,7 +119,7 @@ export default function App() {
         setDashboard(dashboardResult);
         setClaimableData(claimableResult);
         setTicketPrice(priceResult);
-        setPendingMines(pendingResult);
+        // pendingMines now from useMining hook, skip local state
         setBonusOverview(bonusResult);
         
         if (dashboardResult) {
@@ -291,16 +292,15 @@ export default function App() {
     }
   }, [pendingMines, address, dashboard]);
 
-  // Emergency Reset Function
-  const resetPendingMines = useCallback(() => {
-    if (window.confirm('This will clear your local pending count. Only do this if your transaction failed but the app is stuck. Continue?')) {
-      setPendingMines(0);
-      setMiningPhase('');
-      setIsFinalizing(false);
-      finalizingRef.current = false;
-      setSuccess('State reset. You can try mining again.');
-    }
-  }, []);
+  // Reset function now just clears UI state (pendingMines is on-chain)
+  const resetUIState = useCallback(() => {
+    setMiningPhase('');
+    setIsFinalizing(false);
+    finalizingRef.current = false;
+    setError('');
+    setSuccess('');
+    mining.refetchPendingMines();
+  }, [mining]);
 
   // Handle mine action
   const handleMine = useCallback(async () => {
