@@ -15,10 +15,9 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // Log to console in development only
-    if (import.meta.env.DEV) {
-      console.error('ErrorBoundary caught:', error, errorInfo);
-    }
+    // ALWAYS log to console for debugging "Something went wrong"
+    console.error('🚨 ErrorBoundary caught:', error);
+    console.error('Stack:', errorInfo.componentStack);
     // In production, you could send to error reporting service here
   }
 

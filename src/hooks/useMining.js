@@ -214,8 +214,16 @@ export function useMining() {
     reset,
     refetchPendingMines,
     
-    // On-chain state (source of truth) - default to 0 if not connected
-    pendingMinesOnChain: pendingMinesOnChain != null ? Number(pendingMinesOnChain) : 0,
+    // On-chain state (source of truth) - SAFE CONVERSION
+    // Handle BigInt, undefined, null, or string safely
+    pendingMinesOnChain: (() => {
+      try {
+        if (pendingMinesOnChain == null) return 0;
+        return Number(pendingMinesOnChain);
+      } catch (e) {
+        return 0; // Fallback for unsafe BigInts
+      }
+    })(),
     
     // Transaction state
     hash,
