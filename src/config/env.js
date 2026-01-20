@@ -37,7 +37,8 @@ export const CONFIG = {
   chainId: Number(import.meta.env.VITE_CHAIN_ID) || 84532,
   rpcUrl: import.meta.env.VITE_RPC_URL || 'https://sepolia.base.org',
   explorerUrl: import.meta.env.VITE_EXPLORER_URL || 'https://sepolia-explorer.base.org',
-  rainbowProjectId: import.meta.env.VITE_RAINBOW_PROJECT_ID || '',
+  // Fallback to avoid crash if missing, but wallet connect features might be limited
+  rainbowProjectId: import.meta.env.VITE_RAINBOW_PROJECT_ID || '1234567890abcdef1234567890abcdef',
 };
 
 export const EPOCH_SECONDS = 180;
