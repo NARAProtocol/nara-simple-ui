@@ -1060,3 +1060,155 @@
   border-color: #f58538;
 }
 
+/* ========================================
+   CONNECTION STATUS COMPONENT
+   Mobile-friendly reconnect UI
+   ======================================== */
+
+.connection-status {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(20, 20, 30, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  min-width: 280px;
+  max-width: 90vw;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.connection-status.reconnecting,
+.connection-status.connecting {
+  border-color: rgba(74, 158, 255, 0.3);
+}
+
+.connection-status.error {
+  border-color: rgba(255, 107, 107, 0.3);
+}
+
+.connection-status .status-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.connection-status .status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4a9eff;
+}
+
+.connection-status .status-dot.pulsing {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.connection-status .status-icon {
+  font-size: 16px;
+}
+
+.connection-status .status-text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+.connection-status .status-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.connection-status .reconnect-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.connection-status .reconnect-btn:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  transform: scale(1.02);
+}
+
+.connection-status .reconnect-btn:active {
+  transform: scale(0.98);
+}
+
+.connection-status .dismiss-btn {
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.connection-status .dismiss-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+/* Mobile responsiveness for connection status */
+@media (max-width: 480px) {
+  .connection-status {
+    bottom: 90px;
+    min-width: unset;
+    width: calc(100% - 32px);
+    left: 16px;
+    right: 16px;
+    transform: none;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .connection-status .status-text {
+    font-size: 12px;
+  }
+  
+  .connection-status .reconnect-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+}

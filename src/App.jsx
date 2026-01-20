@@ -8,6 +8,7 @@ import { useMining } from './hooks/useMining';
 import BonusDisplay from './components/BonusDisplay';
 import TestnetFaucet from './components/TestnetFaucet';
 import WalletHelp from './components/WalletHelp';
+import ConnectionStatus from './components/ConnectionStatus';
 import { CONFIG, EPOCH_SECONDS } from './constants';
 import { MINING_LIMITS, ERROR_MESSAGES } from './constants/limits';
 import { validateEthInput, sanitizeError } from './utils/validation';
@@ -533,6 +534,9 @@ export default function App() {
       <div className="testnet-banner">
         BASE SEPOLIA TESTNET
       </div>
+
+      {/* Connection Status - Mobile Reconnection UI */}
+      <ConnectionStatus />
 
       {/* Status Bar */}
       <header className="status-bar">
