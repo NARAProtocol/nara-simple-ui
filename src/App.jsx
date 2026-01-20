@@ -220,7 +220,8 @@ export default function App() {
       
       logger.debug('[FINALIZE] Reducing pending locally by:', countToFinalize);
       // Immediately reduce pending count to prevent double-click
-      setPendingMines(prev => Math.max(0, prev - countToFinalize));
+      // Optimistic update handled by hook refetch
+      mining.refetchPendingMines();
       
       // IMMEDIATE OPTIMISTIC UPDATE (Pre-Confirmation):
       // Update dashboard used tickets immediately to prevent "Mine" button from unlocking
@@ -747,7 +748,7 @@ export default function App() {
                         </button>
                         <button 
                           className="action-button reset-btn"
-                          onClick={resetPendingMines}
+                          onClick={resetUIState}
                           style={{ marginTop: '8px', background: 'rgba(255, 255, 255, 0.05)', fontSize: '10px', padding: '8px' }}
                           title="Click here if you are stuck"
                         >
