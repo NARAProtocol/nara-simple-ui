@@ -12,8 +12,9 @@ import { baseSepolia } from 'wagmi/chains';
 import { http, fallback } from 'wagmi';
 import { CONFIG } from './env';
 
-// Multiple RPC endpoints for resilience
+// Multiple RPC endpoints for resilience (Alchemy first for reliability)
 const rpcEndpoints = [
+  http('https://base-sepolia.g.alchemy.com/v2/obPLENfqSksoovd3JTUbM'),  // Alchemy - most reliable
   http(CONFIG.rpcUrl),
   http('https://base-sepolia-rpc.publicnode.com'),
   http('https://base-sepolia.blockpi.network/v1/rpc/public'),

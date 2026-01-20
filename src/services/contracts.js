@@ -14,10 +14,11 @@ let providerIndex = 0;
 // RPC request timeout (30 seconds)
 const RPC_TIMEOUT = 30000;
 
-// Fallback RPC endpoints for resilience
+// Fallback RPC endpoints for resilience (Alchemy first for reliability)
 const RPC_ENDPOINTS = [
+  'https://base-sepolia.g.alchemy.com/v2/obPLENfqSksoovd3JTUbM',  // Alchemy - most reliable
   CONFIG.rpcUrl,
-  'https://base-sepolia-rpc.publicnode.com',  // User-provided reliable fallback
+  'https://base-sepolia-rpc.publicnode.com',
   'https://base-sepolia.blockpi.network/v1/rpc/public',
   'https://sepolia.base.org',
 ].filter(Boolean);
