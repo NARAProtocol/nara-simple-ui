@@ -599,9 +599,62 @@ export default function App() {
       <main className="main-content">
         {!isConnected ? (
           <div className="connect-prompt">
-            <h1>NARA PROTOCOL</h1>
-            <p>Connect your wallet to start mining</p>
-            <ConnectButton />
+            <div className="connect-prompt-wordmark">
+              <h1>NARA</h1>
+              <span className="connect-prompt-tagline">Mining Protocol · Base</span>
+            </div>
+
+            {/* LIVE badge + epoch pill — shows protocol is running right now */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+              <span className="live-badge">
+                <span className="live-badge-dot" />
+                LIVE ON BASE
+              </span>
+              <div className="hero-epoch-pill">
+                <span className="epoch-pill-dot" />
+                <span>Next epoch in</span>
+                <span className="epoch-pill-time">{formatTime(timeRemaining)}</span>
+              </div>
+            </div>
+
+            {/* Hero stats strip — social proof before connect */}
+            <div className="hero-stats-strip">
+              <div className="hero-stat">
+                <span className="hero-stat-label">Reward Cycle</span>
+                <span className="hero-stat-value accent">15 MIN</span>
+              </div>
+              <div className="hero-stat">
+                <span className="hero-stat-label">Reserve</span>
+                <span className="hero-stat-value">700K</span>
+              </div>
+              <div className="hero-stat">
+                <span className="hero-stat-label">Supply</span>
+                <span className="hero-stat-value">1M</span>
+              </div>
+            </div>
+
+            {/* One dominant CTA */}
+            <div className="connect-cta-wrapper">
+              <ConnectButton label="Connect &amp; Start Mining" />
+              <p>Mine NARA every 15 minutes. Real yield. Sealed supply.</p>
+            </div>
+
+            {/* Trust signals */}
+            <div className="hero-trust-row">
+              <a
+                className="hero-trust-item"
+                href={`https://basescan.org/token/${CONFIG.tokenAddress}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                BaseScan ↗
+              </a>
+              <span className="hero-trust-dot" />
+              <span className="hero-trust-item">Fixed 1M Supply</span>
+              <span className="hero-trust-dot" />
+              <span className="hero-trust-item">No Governance</span>
+            </div>
+
             <WalletHelp />
             <TestnetFaucet />
           </div>
@@ -614,8 +667,16 @@ export default function App() {
 
                 {/* Epoch Timer Header */}
                 <div className="epoch-header">
-                  <span className="epoch-label">EPOCH ENDS IN</span>
-                  <div className="epoch-timer">{formatTime(timeRemaining)}</div>
+                  <div className="epoch-header-meta">
+                    <span className="epoch-label">EPOCH ENDS IN</span>
+                    <span className="live-badge">
+                      <span className="live-badge-dot" />
+                      LIVE
+                    </span>
+                  </div>
+                  <div className={`epoch-timer${timeRemaining < 60 ? ' urgent' : ''}`}>
+                    {formatTime(timeRemaining)}
+                  </div>
                 </div>
 
                 {/* Pool Stats - Jackpot pools that users can win */}
@@ -625,12 +686,48 @@ export default function App() {
                     <div className="pool-box-value">
                       <span>{poolETH < 0.01 ? poolETH.toFixed(6) : poolETH.toFixed(4)}</span>
                     </div>
+                    <span className="pool-box-sub">winnable jackpot</span>
                   </div>
                   <div className="pool-box">
                     <span className="pool-box-label">NARA POOL</span>
                     <div className="pool-box-value">
                       <span>{poolNARA < 1 ? poolNARA.toFixed(4) : Math.floor(poolNARA).toLocaleString()}</span>
                     </div>
+                    <span className="pool-box-sub">winnable jackpot</span>
+                  </div>
+                </div>
+
+                {/* Live activity ticker */}
+                <div className="activity-ticker">
+                  <div className="activity-ticker-inner">
+                    <span className="ticker-item">
+                      <span className="ticker-dot" />
+                      EPOCH ACTIVE
+                    </span>
+                    <span className="ticker-sep">·</span>
+                    <span className="ticker-item">15-MIN CYCLES</span>
+                    <span className="ticker-sep">·</span>
+                    <span className="ticker-item">
+                      <span className="ticker-dot" />
+                      REWARDS DISTRIBUTING
+                    </span>
+                    <span className="ticker-sep">·</span>
+                    <span className="ticker-item">BASE MAINNET</span>
+                    <span className="ticker-sep">·</span>
+                    <span className="ticker-item">
+                      <span className="ticker-dot" />
+                      EPOCH ACTIVE
+                    </span>
+                    <span className="ticker-sep">·</span>
+                    <span className="ticker-item">15-MIN CYCLES</span>
+                    <span className="ticker-sep">·</span>
+                    <span className="ticker-item">
+                      <span className="ticker-dot" />
+                      REWARDS DISTRIBUTING
+                    </span>
+                    <span className="ticker-sep">·</span>
+                    <span className="ticker-item">BASE MAINNET</span>
+                    <span className="ticker-sep">·</span>
                   </div>
                 </div>
 
@@ -771,7 +868,7 @@ export default function App() {
                         Hold for 5 minutes after purchase (Testnet)
                       </li>
                     </ul>
-                      <a 
+                      <a
                         href={`https://app.uniswap.org/explore/tokens/base/${CONFIG.tokenAddress}`}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -781,8 +878,28 @@ export default function App() {
                       </a>
                   </div>
                 )}
-                
-                
+
+                {/* Trust strip — inline contract signals */}
+                <div className="trust-strip">
+                  <a
+                    className="trust-item"
+                    href={`https://basescan.org/token/${CONFIG.tokenAddress}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="trust-item-label">Token</span>
+                    <span className="trust-item-value link">BaseScan ↗</span>
+                  </a>
+                  <div className="trust-item">
+                    <span className="trust-item-label">Supply</span>
+                    <span className="trust-item-value">1M Fixed</span>
+                  </div>
+                  <div className="trust-item">
+                    <span className="trust-item-label">Chain</span>
+                    <span className="trust-item-value">Base</span>
+                  </div>
+                </div>
+
               </div>
             ) : (
               <div className="claim-view">

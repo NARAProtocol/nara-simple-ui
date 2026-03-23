@@ -601,7 +601,7 @@ await walletClient.switchChain({ id: EXPECTED_CHAIN_ID })
 // ✓ GOOD (EIP-712 typed data):
 const signature = await walletClient.signTypedData({
   domain: {
-    name: 'PRVT Protocol',
+    name: 'NARA Protocol',
     version: '1',
     chainId: 84532,
     verifyingContract: CONTRACT_ADDRESS,
@@ -641,8 +641,8 @@ const sig = await walletClient.signMessage({
 ```tsx
 <div className="tx-preview">
   <h3>Confirm Transaction</h3>
-  <div>Action: Stake PRVT</div>
-  <div>Amount: {formatEther(amount)} PRVT</div>
+  <div>Action: Stake NARA</div>
+  <div>Amount: {formatEther(amount)} NARA</div>
   <div>Contract: {truncateAddress(CONTRACT_ADDRESS)}</div>
   <div>Estimated Gas: {formatGwei(gasEstimate)} GWEI</div>
   <div>Max Cost: ~${(gasEstimate * gasPrice * ethPrice).toFixed(2)}</div>
@@ -950,7 +950,7 @@ does not indicate future results. Never stake more than you can
 afford to lose.
 
 LEGAL DISCLAIMER
-This interface is provided as-is. Not financial advice. PRVT 
+This interface is provided as-is. Not financial advice. NARA
 Protocol is experimental software. Use at your own risk.
 
 Users are responsible for compliance with their local regulations.
